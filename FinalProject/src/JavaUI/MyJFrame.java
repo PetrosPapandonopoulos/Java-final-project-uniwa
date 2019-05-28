@@ -299,7 +299,7 @@ public class MyJFrame extends JFrame {
     }
 
     private void CopyFile() {
-        if (fileExists) {
+
             chPath = new JFileChooser();
             chPath.setApproveButtonText("Save"); //it changes the button title from "Open" to save if this is for a new file
             FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Documents (*.txt)", "txt", "text");
@@ -315,14 +315,11 @@ public class MyJFrame extends JFrame {
                     PrintWriter pw = new PrintWriter(objWriter);
                     pw.print(temp);
                     pw.close();
-
+                    fileOut.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-
-
-        }
     }
 
     private void ClearAreaAndField() {
