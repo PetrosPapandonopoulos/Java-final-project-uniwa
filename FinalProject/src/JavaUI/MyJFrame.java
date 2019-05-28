@@ -22,7 +22,7 @@ public class MyJFrame extends JFrame {
     private Boolean fileExists=false;
     private FileReader fileIn;
     private FileWriter fileOut;
-
+    private Box managerPanel;
     //Constructor
     public MyJFrame() {
         //Create my own frame
@@ -123,7 +123,7 @@ public class MyJFrame extends JFrame {
         btnClr = new JButton("Clear");
         btnSave = new JButton("Save");
         btnSaveAs = new JButton("copy");
-        //btnChangeMode = new JButton("Change mode"); under construction
+        btnChangeMode = new JButton("Dark mode");
 
         btnOpen.addActionListener(new ActionListener() {
             @Override
@@ -155,13 +155,16 @@ public class MyJFrame extends JFrame {
             }
         });
 
-        //Under construction
-        //btnChangeMode.addActionListener(new ActionListener() {
-            //@Override
-           // public void actionPerformed(ActionEvent e) {
-                //changeBckround();
-           // }
-       // });
+        btnChangeMode.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (txtArea.getForeground() == Color.BLACK) {
+                    DraculaMode();
+                }
+                else
+                    DefaultMode();
+            }
+        });
 
 
 
@@ -170,7 +173,7 @@ public class MyJFrame extends JFrame {
         btnPanel.add(btnClr);
         btnPanel.add(btnSave);
         btnPanel.add(btnSaveAs);
-        //btnPanel.add(btnChangeMode); Under construction
+        btnPanel.add(btnChangeMode);
 
 
         //Creates panel manager, textfield for the fieldPath, text area and Scrollbar if needed
@@ -178,6 +181,7 @@ public class MyJFrame extends JFrame {
          fieldPath = new JTextField();
          txtArea = new JTextArea();
         JScrollPane sp = new JScrollPane();
+        DefaultMode();
 
         //add text field and area to the panel manager
         panelTxt.add(fieldPath, BorderLayout.NORTH);
@@ -188,11 +192,9 @@ public class MyJFrame extends JFrame {
 
 
         //Create the  full manager Layout
-        Box managerPanel = new Box(BoxLayout.Y_AXIS);
-
+        managerPanel = new Box(BoxLayout.Y_AXIS);
         managerPanel.add(btnPanel, BorderLayout.WEST);
         managerPanel.add(panelTxt);
-
         MyFrame.add(mb, BorderLayout.NORTH);
         MyFrame.add(managerPanel);
         MyFrame.setSize(567, 512);
@@ -209,15 +211,28 @@ public class MyJFrame extends JFrame {
         fileExists = false;
     }
 
-   // private void changeBckround(){  **UNDER CONSTRUCTION :(**
-       // fieldPath.setBackground(Color.BLACK);
-      //  txtArea.setBackground(Color.BLACK);
-  //  }
+   private void DraculaMode(){
+        fieldPath.setBackground(Color.BLACK);
+        txtArea.setBackground(Color.BLACK);
+        fieldPath.setForeground(Color.WHITE);
+        txtArea.setForeground(Color.WHITE);
+        btnChangeMode.setText("White mode");
+
+
+    }
+
+    private void DefaultMode() {
+        fieldPath.setBackground(Color.WHITE);
+        txtArea.setBackground(Color.WHITE);
+        fieldPath.setForeground(Color.BLACK);
+        txtArea.setForeground(Color.BLACK);
+        btnChangeMode.setText("Dark mode");
+    }
 
     private void OpenFile(){
         chPath = new JFileChooser();
         BufferedReader objReader;
-        String temp, str;
+        String temp;
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Documents (*.txt)", "txt", "text");
         chPath.setFileFilter(filter);
         int result = chPath.showOpenDialog(null);
@@ -228,11 +243,10 @@ public class MyJFrame extends JFrame {
             try {
                 fileIn = new FileReader(chPath.getSelectedFile());
                 objReader = new BufferedReader(fileIn);
-                temp = objReader.readLine();
-                while ((str = objReader.readLine()) != null) {
-                    temp += "\n" + str;
+                txtArea.setText("");
+                while ((temp = objReader.readLine()) != null) {
+                    txtArea.append(temp+"\n");
                 }
-                txtArea.setText(temp);
                 fileIn.close();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -308,9 +322,6 @@ public class MyJFrame extends JFrame {
             }
 
 
-        }
-        else{
-            JOptionPane.showConfirmDialog(MyFrame, "Are you sure you want to clear the text area?","Clear confirmation", 1, 3);
         }
     }
 
