@@ -5,12 +5,14 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.*;
 
 public class MyJFrame extends JFrame {
 
     private String filePath;
-    private JFrame MyFrame;
+    private JFrame myFrame;
     private JTextArea txtArea;
     private JTextField fieldPath;
     private JFileChooser chPath;
@@ -18,7 +20,7 @@ public class MyJFrame extends JFrame {
     private JMenuBar mb;
     private JMenu m1, m2;
     private JMenuItem miNew, miOpen, miStats, miSave, miSaveAs, miClr, miClose;
-    private JButton btnOpen, btnClr, btnSave, btnSaveAs, btnChangeMode;
+    private JButton btnNew, btnOpen,btnStats, btnClr, btnSave, btnSaveAs, btnChangeMode,btnClose;
     private Boolean fileExists=false;
     private FileReader fileIn;
     private FileWriter fileOut;
@@ -26,7 +28,7 @@ public class MyJFrame extends JFrame {
     //Constructor
     public MyJFrame() {
         //Create my own frame
-        MyFrame = new JFrame("Text editor");
+        myFrame = new JFrame("Text editor");
 
         try {
             // Set metal look and feel
@@ -47,13 +49,13 @@ public class MyJFrame extends JFrame {
         m2 = new JMenu("Edit");
 
         // Create File menu items
-         miNew = new JMenuItem("New");
-         miOpen = new JMenuItem("Open");
-         miStats = new JMenuItem("Statistics");
-         miSave = new JMenuItem("Save");
-         miSaveAs = new JMenuItem("Save as");
-         miClr = new JMenuItem("Clear");
-         miClose = new JMenuItem("Exit");
+        miNew = new JMenuItem("New");
+        miOpen = new JMenuItem("Open");
+        miStats = new JMenuItem("Statistics");
+        miSave = new JMenuItem("Save");
+        miSaveAs = new JMenuItem("Save as");
+        miClr = new JMenuItem("Clear");
+        miClose = new JMenuItem("Exit");
 
         //add JmenuItems to Jmenu
         m1.add(miNew);
@@ -73,6 +75,7 @@ public class MyJFrame extends JFrame {
         miOpen.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 OpenFile();
             }
         });
@@ -86,6 +89,7 @@ public class MyJFrame extends JFrame {
         miSaveAs.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 CopyFile();
             }
         });
@@ -93,17 +97,20 @@ public class MyJFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
+                ShowStats();
             }
         });
         miClose.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 ExitApp();
             }
         });
         miClr.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 ClearAreaAndField();
             }
         });
@@ -119,11 +126,21 @@ public class MyJFrame extends JFrame {
 
         //Create Panel and Buttons for the panel
         btnPanel = new JPanel();
+        btnNew = new JButton("New");
         btnOpen = new JButton("Open");
         btnClr = new JButton("Clear");
         btnSave = new JButton("Save");
         btnSaveAs = new JButton("copy");
+        btnStats = new JButton("Statistics");
         btnChangeMode = new JButton("Dark mode");
+        btnClose = new JButton("Exit");
+
+        btnNew.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                NewFile();
+            }
+        });
 
         btnOpen.addActionListener(new ActionListener() {
             @Override
@@ -166,20 +183,39 @@ public class MyJFrame extends JFrame {
             }
         });
 
+        btnStats.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ShowStats();
+            }
+        });
+
+        btnClose.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ExitApp();
+            }
+        });
+
 
 
         //add buttons to the panel
+        btnPanel.add(btnChangeMode);
+        btnPanel.add(btnNew);
         btnPanel.add(btnOpen);
         btnPanel.add(btnClr);
         btnPanel.add(btnSave);
         btnPanel.add(btnSaveAs);
-        btnPanel.add(btnChangeMode);
+        btnPanel.add(btnStats);
+        btnPanel.add(btnClose);
 
 
         //Creates panel manager, textfield for the fieldPath, text area and Scrollbar if needed
-         panelTxt = new JPanel(new BorderLayout());
-         fieldPath = new JTextField();
-         txtArea = new JTextArea();
+        panelTxt = new JPanel(new BorderLayout());
+        fieldPath = new JTextField();
+        fieldPath.setFont(new Font("Consolas", Font.PLAIN, 15));
+        txtArea = new JTextArea();
+        txtArea.setFont(new Font("Consolas", Font.PLAIN, 15));
         JScrollPane sp = new JScrollPane();
         DefaultMode();
 
@@ -195,11 +231,40 @@ public class MyJFrame extends JFrame {
         managerPanel = new Box(BoxLayout.Y_AXIS);
         managerPanel.add(btnPanel, BorderLayout.WEST);
         managerPanel.add(panelTxt);
-        MyFrame.add(mb, BorderLayout.NORTH);
-        MyFrame.add(managerPanel);
-        MyFrame.setSize(567, 512);
-        MyFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        MyFrame.setVisible(true);
+        myFrame.add(mb, BorderLayout.NORTH);
+        myFrame.add(managerPanel);
+        myFrame.addWindowListener(new WindowListener() {
+            @Override
+            //not used
+            public void windowOpened(WindowEvent e) {}
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                ExitApp();
+            }
+            @Override
+            //not used
+            public void windowClosed(WindowEvent e) {}
+
+            @Override
+            //not used
+            public void windowIconified(WindowEvent e) {}
+
+            @Override
+            //not used
+            public void windowDeiconified(WindowEvent e) {}
+
+            @Override
+            //not used
+            public void windowActivated(WindowEvent e) {}
+
+            @Override
+            //not used
+            public void windowDeactivated(WindowEvent e) {}
+        });
+        myFrame.setSize(956, 816);
+        myFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        myFrame.setVisible(true);
 
     }
 
@@ -211,7 +276,7 @@ public class MyJFrame extends JFrame {
         fileExists = false;
     }
 
-   private void DraculaMode(){
+    private void DraculaMode(){
         fieldPath.setBackground(Color.BLACK);
         txtArea.setBackground(Color.BLACK);
         fieldPath.setForeground(Color.WHITE);
@@ -236,7 +301,7 @@ public class MyJFrame extends JFrame {
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Documents (*.txt)", "txt", "text");
         chPath.setFileFilter(filter);
         int result = chPath.showOpenDialog(null);
-        if(result ==JFileChooser.APPROVE_OPTION){
+        if(result ==JFileChooser.APPROVE_OPTION) {
             filePath = chPath.getSelectedFile().getAbsolutePath();
             fieldPath.setText(filePath);
             fileExists=true;
@@ -257,9 +322,34 @@ public class MyJFrame extends JFrame {
         }
     }
 
-    private void SaveFile(){
+    private void CopyFile() {
 
-        if(fileExists){
+        chPath = new JFileChooser();
+        chPath.setApproveButtonText("Save"); //it changes the button title from "Open" to save if this is for a new file
+        chPath.setDialogTitle("Choose file");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Documents (*.txt)", "txt", "text");
+        chPath.setFileFilter(filter);
+        int result = chPath.showOpenDialog(null);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            String temp;
+            BufferedWriter objWriter;
+            try {
+                fileOut = new FileWriter(chPath.getSelectedFile());
+                objWriter = new BufferedWriter(fileOut);
+                temp = txtArea.getText();
+                PrintWriter pw = new PrintWriter(objWriter);
+                pw.print(temp);
+                pw.close();
+                fileOut.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void SaveFile() {
+
+        if (fileExists) {
             try {
                 String temp;
                 BufferedWriter objWriter;
@@ -274,66 +364,76 @@ public class MyJFrame extends JFrame {
                 e.printStackTrace();
             }
         }
-        else{
-            chPath = new JFileChooser();
-            chPath.setApproveButtonText("Save"); //it changes the button title from "Open" to save if this is for a new file
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Documents (*.txt)", "txt", "text");
-            chPath.setFileFilter(filter);
-            int result = chPath.showOpenDialog(null);
-            if(result ==JFileChooser.APPROVE_OPTION){
-                String temp;
-                BufferedWriter objWriter;
-                try {
-                    fileOut = new FileWriter(chPath.getSelectedFile());
-                    objWriter = new BufferedWriter(fileOut);
-                    temp = txtArea.getText();
-                    PrintWriter pw = new PrintWriter(objWriter);
-                    pw.print(temp);
-                    pw.close();
-                    fileOut.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+        else {
+            CopyFile();
         }
     }
 
-    private void CopyFile() {
-
-            chPath = new JFileChooser();
-            chPath.setApproveButtonText("Save"); //it changes the button title from "Open" to save if this is for a new file
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Documents (*.txt)", "txt", "text");
-            chPath.setFileFilter(filter);
-            int result = chPath.showOpenDialog(null);
-            if (result == JFileChooser.APPROVE_OPTION) {
-                String temp;
-                BufferedWriter objWriter;
-                try {
-                    fileOut = new FileWriter(chPath.getSelectedFile());
-                    objWriter = new BufferedWriter(fileOut);
-                    temp = txtArea.getText();
-                    PrintWriter pw = new PrintWriter(objWriter);
-                    pw.print(temp);
-                    pw.close();
-                    fileOut.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-    }
 
     private void ClearAreaAndField() {
-        int exit = JOptionPane.showConfirmDialog(MyFrame, "Are you sure you want to clear the text area?","Clear confirmation", 1, 3);
+        int exit = JOptionPane.showConfirmDialog(myFrame, "Are you sure you want to clear the text area?","Clear confirmation", 1, 3);
         if (exit == JOptionPane.YES_OPTION){
             fieldPath.setText("");
             txtArea.setText("");
         }
-       ;
+    }
+
+    private void ShowStats(){
+        if(fileExists){ // boolean type that is true if a file is opened to the editor
+            int countWords = 0, countChar = 0, countCharWithSpaces = 0, countPar = 0;
+            FileReader file;//file is type string a it has the absolute path of the file that is opened to the text editor
+            String line, prevLine="";
+            BufferedReader objReader;
+            try {
+                file = new FileReader(filePath);
+                objReader = new BufferedReader(file);//it reads all the file into the input string
+                while ((line = objReader.readLine()) != null) {
+
+                    if(!(line.equals("")) && prevLine.equals("") ) {
+                        countPar++; //if previous line was empty and the currect line is not it meant a paragraph was between them.
+                        line = line.trim();
+                        countCharWithSpaces +=  line.length();
+                        for(int i=0;i<line.length();i++) {
+                            if(!(line.charAt(i) == ' ')) {
+                                countChar++;
+                            }
+                        }
+                        String[] words = line.split(" ");
+                        for (int i = 0; i<words.length;i++){
+                            if( !(words[i].equals("") )){
+                                countWords ++;
+                            }
+                        }
+
+                    }
+                    prevLine = line;
+                }
+
+                if(countPar != 0){
+                    countPar--;
+                }
+                String message = "\nThe number of Words is " + countWords;
+                message += "\nThe number of paragraphs is " + countPar;
+                message += "\nThe number of Characters with spaces  is " + countCharWithSpaces;
+                message += "\nThe number of Characters without spaces is " + countChar;
+
+                JOptionPane.showMessageDialog(myFrame, message, "Statistics of file ", JOptionPane.INFORMATION_MESSAGE);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+        else{
+            JOptionPane.showMessageDialog(myFrame, "No opened file found", "Error Message",0);
+        }
     }
 
     private void ExitApp(){
-        int exit = JOptionPane.showConfirmDialog(MyFrame, "Are you sure you want to exit?","Exit confirmation", 1, 3);
-        if (exit == JOptionPane.YES_OPTION){
+        int exit = JOptionPane.showConfirmDialog(myFrame, "Are you sure you want to exit?","Exit confirmation", 1, 3);
+        if (exit == JOptionPane.YES_OPTION) {
             System.exit(0);
         }
     }
