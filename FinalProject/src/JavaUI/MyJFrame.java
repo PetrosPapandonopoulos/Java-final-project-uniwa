@@ -8,23 +8,26 @@ import java.awt.event.WindowListener;
 import java.io.*;
 
 public class MyJFrame extends JFrame {
-
+    //Variables that are used in at least two different methods inside the MyJFrame class
     private String filePath;
     private JFrame myFrame;
     private JTextArea txtArea;
     private JTextField fieldPath;
     private JFileChooser chPath;
-    private JPanel btnPanel, panelTxt;
-    private JMenuBar mb;
-    private JMenu m1, m2;
-    private JMenuItem miNew, miOpen, miStats, miSave, miSaveAs, miClr, miClose;
-    private JButton btnNew, btnOpen,btnStats, btnClr, btnSave, btnSaveAs, btnChangeMode,btnClose;
-    private Boolean fileExists=false;
-    private FileReader fileIn;
+    private JButton btnChangeMode;
+    private Boolean fileExists = false;
     private FileWriter fileOut;
-    private Box managerPanel;
+
     //Constructor
     public MyJFrame() {
+        //Variables that are only used inside of the constructor
+        JMenuItem miNew, miOpen, miStats, miSave, miSaveAs, miClr, miClose;
+        JMenu m1, m2;
+        JMenuBar mb;
+        JPanel btnPanel, panelTxt;
+        JButton btnNew, btnOpen, btnStats, btnClr, btnSave, btnSaveAs, btnClose;
+        Box managerPanel;
+
         //Create my own frame
         myFrame = new JFrame("Text editor");
 
@@ -34,7 +37,8 @@ public class MyJFrame extends JFrame {
 
 
         } catch (Exception e) {
-
+            //Not handled
+            e.printStackTrace();
         }
 
 
@@ -42,11 +46,11 @@ public class MyJFrame extends JFrame {
         // Create a menubar
         mb = new JMenuBar();
 
-        // Create a menu for file menu
+        // Create the JMenu File and Edit
         m1 = new JMenu("File");
         m2 = new JMenu("Edit");
 
-        // Create File menu items
+        // Create  menu items for the File menu
         miNew = new JMenuItem("New");
         miOpen = new JMenuItem("Open");
         miStats = new JMenuItem("Statistics");
@@ -55,7 +59,7 @@ public class MyJFrame extends JFrame {
         miClr = new JMenuItem("Clear");
         miClose = new JMenuItem("Exit");
 
-        //add JmenuItems to Jmenu
+        //add JMenuItems to file JMenu
         m1.add(miNew);
         m1.add(miOpen);
         m1.add(miSave);
@@ -63,7 +67,10 @@ public class MyJFrame extends JFrame {
         m1.add(miStats);
         m1.add(miClose);
 
-        //add action listener with lambda expression
+        //add JMenuItems to edit JMenu
+        m2.add(miClr);
+
+        //add actionListener to JMenu items using lambda expression
 
         miNew.addActionListener(e -> NewFile());
         miOpen.addActionListener(e -> OpenFile());
@@ -73,16 +80,12 @@ public class MyJFrame extends JFrame {
         miClose.addActionListener(e -> ExitApp());
         miClr.addActionListener(e -> ClearAreaAndField());
 
-        //add JmenuItems to Jmenu for edit
-        m2.add(miClr);
-
-
-        //add Jmenu to JmenuBar
+        //add JMenu to JMenuBar
         mb.add(m1);
         mb.add(m2);
 
 
-        //Create Panel and Buttons for the panel
+        //Initialized the  Panel for the Buttons and the Buttons.
         btnPanel = new JPanel();
         btnNew = new JButton("New");
         btnOpen = new JButton("Open");
@@ -93,7 +96,7 @@ public class MyJFrame extends JFrame {
         btnChangeMode = new JButton("Dark mode");
         btnClose = new JButton("Exit");
 
-        //addActionListener with lambda expressions
+        //addActionListener to buttons using lambda expressions
         btnNew.addActionListener(e -> NewFile());
         btnOpen.addActionListener(e -> OpenFile());
         btnClr.addActionListener(e -> ClearAreaAndField());
@@ -102,14 +105,13 @@ public class MyJFrame extends JFrame {
         btnChangeMode.addActionListener(e -> {
             if (txtArea.getForeground() == Color.BLACK) {
                 DraculaMode();
-            } else
+            }
+            else {
                 DefaultMode();
-            });
+            }
+        });
         btnStats.addActionListener(e -> ShowStats());
         btnClose.addActionListener(e -> ExitApp());
-
-
-
 
         //add buttons to the panel
         btnPanel.add(btnChangeMode);
@@ -122,73 +124,60 @@ public class MyJFrame extends JFrame {
         btnPanel.add(btnClose);
 
 
-        //Creates panel manager, textfield for the fieldPath, text area and Scrollbar if needed
+        //Creates panel for JTextField and JTextArea
         panelTxt = new JPanel(new BorderLayout());
         fieldPath = new JTextField();
-        fieldPath.setFont(new Font("Consolas", Font.PLAIN, 15));
+        fieldPath.setFont(new Font("Consolas", Font.PLAIN, 15));  //set the font and size of the characters
+
         txtArea = new JTextArea();
         txtArea.setFont(new Font("Consolas", Font.PLAIN, 15));
-        JScrollPane sp = new JScrollPane();
-        DefaultMode();
-
         //add text field and area to the panel manager
         panelTxt.add(fieldPath, BorderLayout.NORTH);
+
+        DefaultMode(); //Here i have to initialize the theme to default. If i don't call this method here. When the user clicks on the Dark theme button the first time it will not change the color.
+
+        //Add Scrollbar if need
+        JScrollPane sp = new JScrollPane();
         sp.setHorizontalScrollBarPolicy( JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         sp.setVerticalScrollBarPolicy( JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         sp.getViewport().add(txtArea);
         panelTxt.add(sp);
 
 
-        //Create the  full manager Layout
+        //Create the full manager Layout with BoxLayout
         managerPanel = new Box(BoxLayout.Y_AXIS);
-        managerPanel.add(btnPanel, BorderLayout.WEST);
+        managerPanel.add(btnPanel);
         managerPanel.add(panelTxt);
         myFrame.add(mb, BorderLayout.NORTH);
         myFrame.add(managerPanel);
-        myFrame.addWindowListener(new WindowListener() {
-            @Override
-            //not used
-            public void windowOpened(WindowEvent e) {}
 
-            @Override
+        myFrame.addWindowListener(new WindowListener() { //add a windowListener so that i can setup the confirmation before windowClosing
+            public void windowOpened(WindowEvent e) {} //not used
             public void windowClosing(WindowEvent e) {
                 ExitApp();
             }
-            @Override
-            //not used
-            public void windowClosed(WindowEvent e) {}
-
-            @Override
-            //not used
-            public void windowIconified(WindowEvent e) {}
-
-            @Override
-            //not used
-            public void windowDeiconified(WindowEvent e) {}
-
-            @Override
-            //not used
-            public void windowActivated(WindowEvent e) {}
-
-            @Override
-            //not used
-            public void windowDeactivated(WindowEvent e) {}
+            public void windowClosed(WindowEvent e) {}//not used
+            public void windowIconified(WindowEvent e) {}//not used
+            public void windowDeiconified(WindowEvent e) {}//not used
+            public void windowActivated(WindowEvent e) {}//not used
+            public void windowDeactivated(WindowEvent e) {}//not used
         });
-        myFrame.setSize(956, 816);
-        myFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        myFrame.setVisible(true);
+        myFrame.setSize(956, 816); //Setup Default size
+        myFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); //if i don't setDefaultCloseOperation to "DO_NOTHING_ON_CLOSE" the frame will despawn but the program will not exit
+        myFrame.setLocationRelativeTo(null); //this will start the frame in the center of the screen
+        myFrame.setVisible(true); //this will set the frame visible
 
     }
 
 
-    private void NewFile(){
+    private void NewFile(){//Initialize for a new file
         filePath = "";
         fieldPath.setText("");
         txtArea.setText("");
         fileExists = false;
     }
 
-    private void DraculaMode(){
+    private void DraculaMode(){ //change the theme to dark
         fieldPath.setBackground(Color.BLACK);
         txtArea.setBackground(Color.BLACK);
         fieldPath.setForeground(Color.WHITE);
@@ -198,7 +187,7 @@ public class MyJFrame extends JFrame {
 
     }
 
-    private void DefaultMode() {
+    private void DefaultMode() { //change the theme to white
         fieldPath.setBackground(Color.WHITE);
         txtArea.setBackground(Color.WHITE);
         fieldPath.setForeground(Color.BLACK);
@@ -206,42 +195,43 @@ public class MyJFrame extends JFrame {
         btnChangeMode.setText("Dark mode");
     }
 
-    private void OpenFile(){
+    private void OpenFile(){ //open a file
+        //Create a file reader
+        FileReader fileIn;
         chPath = new JFileChooser();
         BufferedReader objReader;
         String temp;
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Documents (*.txt)", "txt", "text");
-        chPath.setFileFilter(filter);
-        int result = chPath.showOpenDialog(null);
-        if(result ==JFileChooser.APPROVE_OPTION) {
-            filePath = chPath.getSelectedFile().getAbsolutePath();
-            fieldPath.setText(filePath);
-            fileExists=true;
+        chPath.setFileFilter(filter); //Set a new filter for text files
+        int result = chPath.showOpenDialog(null); //open the JFileChooser window
+        if(result == JFileChooser.APPROVE_OPTION) { //If approve_option (the user choose a file to open
             try {
                 fileIn = new FileReader(chPath.getSelectedFile());
+                filePath = chPath.getSelectedFile().getAbsolutePath();
+                fieldPath.setText(filePath);
+                fileExists=true;
                 objReader = new BufferedReader(fileIn);
                 txtArea.setText("");
                 while ((temp = objReader.readLine()) != null) {
-                    txtArea.append(temp+"\n");
+                    txtArea.append(temp + "\n"); //Write the file into the JTextArea
                 }
-                fileIn.close();
+                fileIn.close(); //close the file
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                JOptionPane.showMessageDialog(myFrame, "File not found", "Error Message", JOptionPane.ERROR_MESSAGE); //If the user choose a name of a file that is not exists or the
+                                                                                                                                    // file could not open at all, it will show a message to the user that the file is not found
 
             } catch (IOException e) {
+                //not handled
                 e.printStackTrace();
             }
         }
     }
 
-    private void CopyFile() {
-
+    private void CopyFile() { //Copy the content of the JTextArea to a specific file
         chPath = new JFileChooser();
-        chPath.setApproveButtonText("Save"); //it changes the button title from "Open" to save if this is for a new file
-        chPath.setDialogTitle("Choose file");
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Documents (*.txt)", "txt", "text");
         chPath.setFileFilter(filter);
-        int result = chPath.showOpenDialog(null);
+        int result = chPath.showSaveDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {
             String temp;
             BufferedWriter objWriter;
@@ -261,7 +251,7 @@ public class MyJFrame extends JFrame {
 
     private void SaveFile() {
 
-        if (fileExists) {
+        if (fileExists) { //if a file is open then the content of the JTextArea
             try {
                 String temp;
                 BufferedWriter objWriter;
@@ -276,14 +266,14 @@ public class MyJFrame extends JFrame {
                 e.printStackTrace();
             }
         }
-        else {
+        else {//if a file is not open, and in order to avoid duplicate code i just call the method CopyFile.
             CopyFile();
         }
     }
 
 
-    private void ClearAreaAndField() {
-        int exit = JOptionPane.showConfirmDialog(myFrame, "Are you sure you want to clear the text area?","Clear confirmation", 1, 3);
+    private void ClearAreaAndField() {//It will delete any content written into the JTextArea and JTextField,a confirmation message is also included
+        int exit = JOptionPane.showConfirmDialog(myFrame, "Are you sure you want to clear the text area?", "Clear confirmation", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (exit == JOptionPane.YES_OPTION){
             fieldPath.setText("");
             txtArea.setText("");
@@ -298,11 +288,11 @@ public class MyJFrame extends JFrame {
             BufferedReader objReader;
             try {
                 file = new FileReader(filePath);
-                objReader = new BufferedReader(file);//it reads all the file into the input string
+                objReader = new BufferedReader(file);
                 while ((line = objReader.readLine()) != null) {
 
-                    if(!(line.equals("")) && prevLine.equals("") ) {
-                        countPar++; //if previous line was empty and the currect line is not it meant a paragraph was between them.
+                    if( !(line.equals("")) && prevLine.equals("") ) {
+                        countPar++; //if previous line was empty and the current line is not, then this is a new paragraph.
                         line = line.trim();
                         countCharWithSpaces +=  line.length();
                         for(int i=0;i<line.length();i++) {
@@ -319,30 +309,27 @@ public class MyJFrame extends JFrame {
                 if(countPar != 0){
                     countPar--;
                 }
-                File fileSize = new File(filePath);
-                StringBuilder message = new StringBuilder();
-                message.append("The number of Words is " + countWords + "\n");
-                message.append("The number of paragraphs is " + countPar + "\n");
-                message.append("The number of Characters with spaces  is " + countCharWithSpaces + "\n");
-                message.append("The number of Characters without spaces is " + countChar + "\n");
-                message.append("The size of file in bytes is " + fileSize.length());
+                File fileSize = new File(filePath); //in order to show the size of a file i have to call the length() method, but the lenght method cannot be used in a FileReader  object so i have to create a File class object to do so.
+                String message = "The number of Words is " + countWords; //create the string that is displayed in showMessageDialog
+                message += "\nThe number of paragraphs is " + countPar;
+                message += "\nThe number of Characters with spaces  is " + countCharWithSpaces;
+                message += "\nThe number of Characters without spaces is " + countChar;
+                message += "\nThe size of file in bytes is " + fileSize.length();
 
-                JOptionPane.showMessageDialog(myFrame, message.toString().trim(), "Statistics of file ", JOptionPane.INFORMATION_MESSAGE);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-
-            } catch (IOException e) {
+                JOptionPane.showMessageDialog(myFrame, message, "Statistics of file ", JOptionPane.INFORMATION_MESSAGE);
+            }catch (IOException e) {
+                //not handled
                 e.printStackTrace();
             }
 
         }
-        else{
-            JOptionPane.showMessageDialog(myFrame, "No opened file found", "Error Message",0);
+        else {
+            JOptionPane.showMessageDialog(myFrame, "No opened file found", "Error Message",JOptionPane.ERROR_MESSAGE); //if a file is not open from the text editor the ShowStats method cannot be used
         }
     }
 
-    private void ExitApp(){
-        int exit = JOptionPane.showConfirmDialog(myFrame, "Are you sure you want to exit?","Exit confirmation", 1, 3);
+    private void ExitApp(){ //A method with a confirmation message before exiting the app
+        int exit = JOptionPane.showConfirmDialog(myFrame, "Are you sure you want to exit?","Exit confirmation", 1, JOptionPane.QUESTION_MESSAGE);
         if (exit == JOptionPane.YES_OPTION) {
             System.exit(0);
         }
