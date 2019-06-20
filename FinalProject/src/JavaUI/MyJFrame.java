@@ -3,8 +3,6 @@ package JavaUI;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.*;
@@ -65,55 +63,15 @@ public class MyJFrame extends JFrame {
         m1.add(miStats);
         m1.add(miClose);
 
-        //add action listener
-        miNew.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                NewFile();
-            }
-        });
-        miOpen.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        //add action listener with lambda expression
 
-                OpenFile();
-            }
-        });
-        miSave.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SaveFile();
-
-            }
-        });
-        miSaveAs.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                CopyFile();
-            }
-        });
-        miStats.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                ShowStats();
-            }
-        });
-        miClose.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                ExitApp();
-            }
-        });
-        miClr.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                ClearAreaAndField();
-            }
-        });
+        miNew.addActionListener(e -> NewFile());
+        miOpen.addActionListener(e -> OpenFile());
+        miSave.addActionListener(e -> SaveFile());
+        miSaveAs.addActionListener(e -> CopyFile());
+        miStats.addActionListener(e -> ShowStats());
+        miClose.addActionListener(e -> ExitApp());
+        miClr.addActionListener(e -> ClearAreaAndField());
 
         //add JmenuItems to Jmenu for edit
         m2.add(miClr);
@@ -135,67 +93,21 @@ public class MyJFrame extends JFrame {
         btnChangeMode = new JButton("Dark mode");
         btnClose = new JButton("Exit");
 
-        btnNew.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                NewFile();
-            }
-        });
+        //addActionListener with lambda expressions
+        btnNew.addActionListener(e -> NewFile());
+        btnOpen.addActionListener(e -> OpenFile());
+        btnClr.addActionListener(e -> ClearAreaAndField());
+        btnSave.addActionListener( e -> SaveFile());
+        btnSaveAs.addActionListener(e -> CopyFile());
+        btnChangeMode.addActionListener(e -> {
+            if (txtArea.getForeground() == Color.BLACK) {
+                DraculaMode();
+            } else
+                DefaultMode();
+            });
+        btnStats.addActionListener(e -> ShowStats());
+        btnClose.addActionListener(e -> ExitApp());
 
-        btnOpen.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                OpenFile();
-            }
-        });
-
-        btnClr.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ClearAreaAndField();
-
-            }
-        });
-
-        btnSave.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SaveFile();
-
-            }
-        });
-
-        btnSaveAs.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                CopyFile();
-            }
-        });
-
-        btnChangeMode.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (txtArea.getForeground() == Color.BLACK) {
-                    DraculaMode();
-                }
-                else
-                    DefaultMode();
-            }
-        });
-
-        btnStats.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ShowStats();
-            }
-        });
-
-        btnClose.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ExitApp();
-            }
-        });
 
 
 
@@ -398,13 +310,8 @@ public class MyJFrame extends JFrame {
                                 countChar++;
                             }
                         }
-                        String[] words = line.split(" ");
-                        for (int i = 0; i<words.length;i++){
-                            if( !(words[i].equals("") )){
-                                countWords ++;
-                            }
-                        }
-
+                        String[] words = line.split("\\s+");
+                        countWords += words.length;
                     }
                     prevLine = line;
                 }
@@ -412,12 +319,15 @@ public class MyJFrame extends JFrame {
                 if(countPar != 0){
                     countPar--;
                 }
-                String message = "\nThe number of Words is " + countWords;
-                message += "\nThe number of paragraphs is " + countPar;
-                message += "\nThe number of Characters with spaces  is " + countCharWithSpaces;
-                message += "\nThe number of Characters without spaces is " + countChar;
+                File fileSize = new File(filePath);
+                StringBuilder message = new StringBuilder();
+                message.append("The number of Words is " + countWords + "\n");
+                message.append("The number of paragraphs is " + countPar + "\n");
+                message.append("The number of Characters with spaces  is " + countCharWithSpaces + "\n");
+                message.append("The number of Characters without spaces is " + countChar + "\n");
+                message.append("The size of file in bytes is " + fileSize.length());
 
-                JOptionPane.showMessageDialog(myFrame, message, "Statistics of file ", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(myFrame, message.toString().trim(), "Statistics of file ", JOptionPane.INFORMATION_MESSAGE);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
 
